@@ -30,7 +30,7 @@ new_df = df.loc[:,df.columns[0] : df.columns[5]]
 #new_df.loc[:,'f2'] = df['avgstepTime'] - df['avgstepTimePS']
 
 #discretize the data (some features may need more than two levels)
-
+store_df = deepcopy(new_df)
 values_ecr = {} # stores max ecr value for a column
 name = []
 for i in range(7,10):
@@ -60,20 +60,20 @@ for i in range(7,10):
 				max_ecr = ecr
 				n = no_of_clusters
 				test_df[df.columns[i]]=[x+1 for x in kmeans.labels_]
-				
+				store_df[df.columns[i]] = [x+1 for x in kmeans.labels_]
 		#values.append( str(df.columns[i]) + " : " + str(n) + " : " + str(max_ecr))
 		values_ecr[df.columns[i]]=max_ecr
 	else:
 		test_df[df.columns[i]]=df[df.columns[i]]
-		
+		store_df[df.columns[i]] = [x+1 for x in kmeans.labels_]
 
-test_df.to_csv("new.csv",sep=',')
-
+#test_df.to_csv("new.csv",sep=',')
+print(store_df.columns)
 print(values_ecr)
 print(name)
 # write optimal discretized data to file 
 
-
+store_df.to_csv("DiscretizedData.csv" , sep=',')
 # print os.popen(cmd).read().split('\n')[-1]
 # print float(os.popen(cmd).read().split('\n')[-2].split(': ')[1])
 		# print str(df.columns[i]) + " : Discretize Bitch! : " + str(unique)
