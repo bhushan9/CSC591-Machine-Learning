@@ -13,8 +13,19 @@ discretized_df = df.loc[:,df.columns[0] : df.columns[5]]
 # Get the number of columns 
 n = len(df.columns)
 
+# Get corelation between columns of initial dataframe (NOT DISCRETIZED)
+corelation_matrix = []
+for i in range(6,n):
+	row = []
+	for j in range(6,n):
+		row.append(pearsonr(df[df.columns[i]],df[df.columns[j]])[0])
+	corelation_matrix.append(row)
+
+corelation_matrix = np.array(corelation_matrix)
+# print corelation_matrix
+
 # The first six columns are static. Iterate over rest
-for i in range(6,8):
+for i in range(6,n):
 
 	# # Get column name 
 	column_name = df.columns[i]
@@ -37,15 +48,21 @@ for i in range(6,8):
 
 # print discretized_df
 
-# Get corelation between columns of initial dataframe (NOT DISCRETIZED)
-corelation_matrix = []
-for i in range(6,n):
-	row = []
-	for j in range(6,n):
-		row.append(pearsonr(df[df.columns[i]],df[df.columns[j]])[0])
-	corelation_matrix.append(row)
+# Find ECR value for each feature independently
+out = []
+for i in range(6,15):
+	test_df = df.loc[:,df.columns[0] : df.columns[5]]
+	column_name = discretized_df.columns[i]
+	test_df[column_name] = discretized_df[column_name]
+	test_df.to_csv('test.csv', sep=',')
 
-corelation_matrix = np.array(corelation_matrix)
-print corelation_matrix
+	try:
+		ecr = float(os.popen('python MDP_process.py -input test.csv').read().split('\n')[-2].split(': ')[1])
+	except:
+		ecr = None
+	out.append(ecr)
+
+out = np.array(out)
+print out
 
 print 'Success!'
