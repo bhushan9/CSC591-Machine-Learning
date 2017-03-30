@@ -67,6 +67,7 @@ def generate_MDP_input(filename):
         # each column will sum to 1 for each row, obtain the state transition table
         A[act] = np.divide(A[act].transpose(), np.sum(A[act], axis=1))
         A[act] = A[act].transpose()
+        A[np.isnan(A)] = float(1)/Ns
 
     return [start_states, A, expectR, distinct_acts, distinct_states]
 
