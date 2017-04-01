@@ -97,7 +97,7 @@ def output_policy(distinct_acts, distinct_states, vi):
         print(distinct_states[s]+ " -> " + distinct_acts[vi.policy[s]] + ", "+str(vi.V[s]))
 
 # Read the csv file
-df = pandas.read_csv('MDP_Original_data.csv')
+df = pandas.read_csv('MDP_Original_data2.csv')
 
 # Get the number of columns 
 n = len(df.columns)
@@ -164,9 +164,9 @@ corelation_matrix = np.array(corelation_matrix)
 #     out.append(out_row)
 
 # out = np.array(out)
-# np.savetxt("ecr.txt", out, delimiter=',')
+# np.savetxt("ecr_2.txt", out, delimiter=',')
 
-out = np.loadtxt('ecr.txt',delimiter = ',')
+out = np.loadtxt('ecr_2.txt',delimiter = ',')
 max_ecr = np.amax(out, axis=0)
 clusters = out.argmax(axis=0) + 2
 
@@ -184,7 +184,7 @@ out = []
 for threshold in [1.0, 0.9, 0.8, 0.85, 0.7, 0.75, 0.6, 0.65, 0.5, 0.55, 0.4, 0.3, 0.2, 0.1]:
     ecr_selected = []
     index = 0
-    while (index<len(ecr_data) and len(ecr_selected)<=9):
+    while (index<len(ecr_data) and len(ecr_selected)<8):
         candidate = ecr_data[index]
         corelation = [abs(corelation_matrix[x[0],candidate[0]]) for x in ecr_selected]
         if all(x < threshold for x in corelation):
