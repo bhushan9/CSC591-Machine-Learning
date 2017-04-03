@@ -181,7 +181,8 @@ for index,ecr in enumerate(max_ecr):
 ecr_data.sort(key = lambda x: x[1], reverse=True)
 
 out = []
-for threshold in [1.0, 0.9, 0.8, 0.85, 0.7, 0.75, 0.6, 0.65, 0.5, 0.55, 0.4, 0.3, 0.2, 0.1]:
+for i in range(0,100):
+    threshold = float(float(i)/100)
     ecr_selected = []
     index = 0
     while (index<len(ecr_data) and len(ecr_selected)<8):
