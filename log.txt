@@ -34,3 +34,21 @@ Better result when K is 2 and 3 but ECR value decreases drastically when k = 5. 
 
 	Made a co-relation matrix out of features
 	The corelation values range from ~0 to ~0.99 (There is a wide range of corelation involved in the factors)
+
+6. (127,CurrPro_avgProbTimeWE,3)
+(18,difficultProblemCountSolved,2)
+(83,cumul_avgstepTimeWE,3)
+(78,cumul_hintCount,3)
+(59,ruleScoreDS,3)
+(69,ruleScoreCONTRA,3)
+(119,cumul_SystemInfoHintCount,3)
+(75,ruleScoreEXP,3)
+
+7. (127,CurrPro_avgProbTimeWE,3)
+(18,difficultProblemCountSolved,2)
+(83,cumul_avgstepTimeWE,3)
+(78,cumul_hintCount,3)
+(13,stepTimeDeviation,3)
+(25,UseCount,3)
+(16,Level,2)
+(17,probDiff,2)
