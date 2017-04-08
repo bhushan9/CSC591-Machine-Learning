@@ -115,79 +115,28 @@ df = pandas.read_csv('MDP_Discretized_data2.csv')
 # Get the number of columns 
 n = len(df.columns)
 
-# Get corelation between columns of initial dataframe (NOT DISCRETIZED)
-corelation_matrix = []
+test_df = pandas.read_csv('test.csv_best_2')
+print test_df.columns
+
 for i in range(6,n):
-    row = []
-    for j in range(6,n):
-        row.append(abs(pearsonr(df[df.columns[i]],df[df.columns[j]])[0]))
-    corelation_matrix.append(row)
+    if i not in [127, 126, 113, 18, 80, 106, 123, 59]:
+        for j in range(6,14):
+            test_df = pandas.read_csv('test.csv_best_2')
+            column_name = test_df.columns[j]
+            test_df[column_name] = df[df.columns[i]]
+            test_df.to_csv('test.csv', sep=',')
+            # load data set with selected or extracted discrete features
+            [start_states, A, expectR, distinct_acts, distinct_states] = generate_MDP_input('test.csv')
 
-corelation_matrix = np.array(corelation_matrix)
-# print corelation_matrix
+            # apply Value Iteration to run the MDP
+            vi = mdptoolbox.mdp.ValueIteration(A, expectR, discount = 0.9)
+            vi.run()
+            # print(vi.policy)
 
-out = np.loadtxt('ecr_2.txt',delimiter = ',')
-max_ecr = np.amax(out, axis=0)
-clusters = out.argmax(axis=0) + 2
+            # output policy
+            # output_policy(distinct_acts, distinct_states, vi)
 
-ecr_data = []
-for index,ecr in enumerate(max_ecr):
-    ecr_data.append((index, ecr, clusters[index]))
-ecr_data.sort(key = lambda x: x[1], reverse=True)
-
-out = []
-for j in range(8,40):
-    selected_index = []
-    threshold = float(float(j)/100)
-    ecr_selected = []
-    index = 0
-    while (index<len(ecr_data) and len(ecr_selected)<8):
-        candidate = ecr_data[index]
-        corelation = [corelation_matrix[x[0],candidate[0]] for x in ecr_selected]
-        if all(x < threshold for x in corelation):
-            ecr_selected.append(candidate)
-            # print "SELECTED : " + str(candidate) + " : " + str(corelation)
-        # else:
-            # print "REJECTED : " + str(candidate) + " : " + str(corelation)
-        index += 1
-
-    # print ecr_selected
-    test_df = df.loc[:,df.columns[0] : df.columns[5]]
-    for each in ecr_selected:
-        i = each[0] + 6
-        selected_index.append(i)
-        column_name = df.columns[i]
-        column = df[df.columns[i]]
-        # n_clusters = each[2]
-
-        # # Discretize the column if the number of unique elements is greater than 6
-        # n_unique = len(np.unique(column))
-        # # print n_unique
-
-        # if n_unique > 6:
-        #   # Reshape the data to make it multi-dimensional data
-        #   kmeans = KMeans(n_clusters=n_clusters).fit(df[df.columns[i]].values.reshape(-1,1))
-        #   test_df[column_name] = kmeans.labels_
-        # else:
-        #   test_df[column_name] = df[column_name]
-        test_df[column_name] = df[column_name]
-
-    test_df.to_csv('test.csv', sep=',', index=False)
-
-    # load data set with selected or extracted discrete features
-    [start_states, A, expectR, distinct_acts, distinct_states] = generate_MDP_input('test.csv')
-
-    # apply Value Iteration to run the MDP
-    vi = mdptoolbox.mdp.ValueIteration(A, expectR, discount = 0.9)
-    vi.run()
-    # print(vi.policy)
-
-    # output policy
-    # output_policy(distinct_acts, distinct_states, vi)
-
-    # evaluate policy using ECR
-    ecr = calcuate_ECR(start_states, vi.V)
-    out.append((threshold,ecr,selected_index))
-
-print str(out)
-print 'Success!'
+            # evaluate policy using ECR
+            ecr = float(calcuate_ECR(start_states, vi.V))
+            if ecr > 50:
+                print "Replacing : "+str(j)+":"+str(i)+" ECR : "+str(ecr)

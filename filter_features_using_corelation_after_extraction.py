@@ -110,7 +110,10 @@ def output_policy(distinct_acts, distinct_states, vi):
         print(distinct_states[s]+ " -> " + distinct_acts[vi.policy[s]] + ", "+str(vi.V[s]))
 
 # Read the csv file
-df = pandas.read_csv('MDP_Discretized_data2.csv')
+df = pandas.read_csv('MDP_Extracted_data2.csv')
+df_original = pandas.read_csv('MDP_Original_data2.csv')
+
+index_list = [index-6 for index in list(range(6,len(df_original.columns))) if df_original.columns[index] in df.columns[6:]]
 
 # Get the number of columns 
 n = len(df.columns)
@@ -127,6 +130,7 @@ corelation_matrix = np.array(corelation_matrix)
 # print corelation_matrix
 
 out = np.loadtxt('ecr_2.txt',delimiter = ',')
+out = out[:,index_list]
 max_ecr = np.amax(out, axis=0)
 clusters = out.argmax(axis=0) + 2
 
@@ -136,7 +140,7 @@ for index,ecr in enumerate(max_ecr):
 ecr_data.sort(key = lambda x: x[1], reverse=True)
 
 out = []
-for j in range(8,40):
+for j in range(1,40):
     selected_index = []
     threshold = float(float(j)/100)
     ecr_selected = []
